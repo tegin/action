@@ -1,18 +1,24 @@
-import * as core from '@actions/core'
-import {wait} from './wait'
+
+import { info, notice, error, debug, setFailed, getInput } from '@actions/core'
+import { context, getOctokit } from '@actions/github'
 
 async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
+    const GH_TOKEN = getInput('token')
+    const configPath = getInput('config')
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    const octokit = getOctokit(GH_TOKEN)
 
-    core.setOutput('time', new Date().toTimeString())
-  } catch (error) {
-    if (error instanceof Error) core.setFailed(error.message)
+    const org: string = context.repo?.owner
+
+    if (!org) {
+      error(`No organization found: ${JSON.stringify(context.payload, null, 2)}`)
+      throw Error('Missing organization in the context payload')
+    }
+    info(org)
+  } catch (err: any) {
+    error(err)
+    if (err instanceof Error) setFailed(err.message)
   }
 }
 

@@ -16,9 +16,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getOrgTeams = void 0;
 const core_1 = __nccwpck_require__(2186);
 const github_1 = __nccwpck_require__(5438);
 const fs_1 = __nccwpck_require__(3412);
+function getOrgTeams(octokit, org) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { data, status } = yield octokit.rest.teams.list({
+            org,
+            per_page: 100
+        });
+        if (status !== 200) {
+            throw Error(`Failed to get org teams: ${status}\n${data}`);
+        }
+        return data;
+    });
+}
+exports.getOrgTeams = getOrgTeams;
 function run() {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
@@ -32,9 +46,19 @@ function run() {
                 throw Error('Missing organization in the context payload');
             }
             const config_data = yield (0, fs_1.loadConfig)(configPath);
+            const team_data = yield getOrgTeams(octokit, org);
+            const teams = [];
+            for (const team of team_data) {
+                teams.push(team.slug);
+            }
             for (var key in config_data) {
-                (0, core_1.info)(key);
-                (0, core_1.info)(config_data[key]);
+                if (key in teams) { }
+                else {
+                    const { data, status } = yield octokit.rest.teams.create({
+                        org: org,
+                        name: key,
+                    });
+                }
             }
         }
         catch (err) {

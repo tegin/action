@@ -1,6 +1,7 @@
 
 import { info, notice, error, debug, setFailed, getInput } from '@actions/core'
 import { context, getOctokit } from '@actions/github'
+import {loadConfig} from './utils/fs';
 
 async function run(): Promise<void> {
   try {
@@ -15,7 +16,8 @@ async function run(): Promise<void> {
       error(`No organization found: ${JSON.stringify(context.payload, null, 2)}`)
       throw Error('Missing organization in the context payload')
     }
-    info(org)
+    const config_data = await loadConfig(configPath)
+    info(config_data)
   } catch (err: any) {
     error(err)
     if (err instanceof Error) setFailed(err.message)

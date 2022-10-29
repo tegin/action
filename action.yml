@@ -8,7 +8,7 @@ inputs:
   config:
     description: Configuration file
     required: true
-    default: './assemble.yml'
+    default: './generate.yml'
 runs:
   using: 'node16'
   main: 'dist/index.js'

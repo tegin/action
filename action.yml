@@ -4,7 +4,6 @@ author: 'Your name or organization here'
 inputs:
   token:
     description: GitHub Token to interact with GitHub API
-    required: true
   config:
     description: Configuration file
     required: true

@@ -32,7 +32,10 @@ function run() {
                 throw Error('Missing organization in the context payload');
             }
             const config_data = yield (0, fs_1.loadConfig)(configPath);
-            (0, core_1.info)(config_data);
+            for (var key in config_data) {
+                (0, core_1.info)(key);
+                (0, core_1.info)(config_data[key]);
+            }
         }
         catch (err) {
             (0, core_1.error)(err);

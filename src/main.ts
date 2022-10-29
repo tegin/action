@@ -17,7 +17,10 @@ async function run(): Promise<void> {
       throw Error('Missing organization in the context payload')
     }
     const config_data = await loadConfig(configPath)
-    info(config_data)
+    for (var key in config_data) {
+      info(key)
+      info(config_data[key])
+    }
   } catch (err: any) {
     error(err)
     if (err instanceof Error) setFailed(err.message)

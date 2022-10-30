@@ -46,7 +46,7 @@ function addMember(octokit, org, team, user) {
     return __awaiter(this, void 0, void 0, function* () {
         const { data, status } = yield octokit.rest.teams.addOrUpdateMembershipForUserInOrg({
             org: org,
-            team_slug: team,
+            team_slug: team.slug,
             username: user,
         });
         if (status !== 200) {

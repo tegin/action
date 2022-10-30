@@ -96,14 +96,12 @@ async function run(): Promise<void> {
         addMember(octokit, org, team, config_data[key].users[user]);
         users[config_data[key].users[user]] = config_data[key].users[user];
       }
-      info("Checking all members")
       const current_members = await getTeamMembers(octokit, org, team);
       for (var member in current_members) {
-        info("Checking current member " + current_members[member].login)
         if (current_members[member].login in users) {}
         else {
           info("Removing member " + current_members[member].login)
-          //removeTeamMember(octokit, org, team, current_members[member])
+          removeTeamMember(octokit, org, team, current_members[member])
         }
       }
       info("TODO: Repo creation");

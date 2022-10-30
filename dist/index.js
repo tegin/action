@@ -113,14 +113,12 @@ function run() {
                     addMember(octokit, org, team, config_data[key].users[user]);
                     users[config_data[key].users[user]] = config_data[key].users[user];
                 }
-                (0, core_1.info)("Checking all members");
                 const current_members = yield getTeamMembers(octokit, org, team);
                 for (var member in current_members) {
-                    (0, core_1.info)("Checking current member " + current_members[member].login);
                     if (current_members[member].login in users) { }
                     else {
                         (0, core_1.info)("Removing member " + current_members[member].login);
-                        //removeTeamMember(octokit, org, team, current_members[member])
+                        removeTeamMember(octokit, org, team, current_members[member]);
                     }
                 }
                 (0, core_1.info)("TODO: Repo creation");

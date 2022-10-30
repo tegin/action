@@ -98,6 +98,7 @@ function run() {
                 teams[team.slug] = team;
             }
             for (var key in config_data) {
+                (0, core_1.info)("Checking team " + key);
                 var team;
                 var users = [];
                 if (key in teams) {
@@ -111,6 +112,7 @@ function run() {
                     addMember(octokit, org, team, config_data[key].users[user]);
                     users.push(config_data[key].users[user]);
                 }
+                (0, core_1.info)("Checking all members");
                 const current_members = yield getTeamMembers(octokit, org, team);
                 for (var member in current_members) {
                     if (current_members[member].login in users) { }
@@ -119,6 +121,7 @@ function run() {
                         removeTeamMember(octokit, org, team, current_members[member]);
                     }
                 }
+                (0, core_1.info)("TODO: Repo creation");
             }
         }
         catch (err) {

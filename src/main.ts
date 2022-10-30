@@ -81,6 +81,7 @@ async function run(): Promise<void> {
       teams[team.slug] = team;
     }
     for (var key in config_data) {
+      info("Checking team " + key)
       var team;
       var users = []
       if (key in teams) {
@@ -94,6 +95,7 @@ async function run(): Promise<void> {
         addMember(octokit, org, team, config_data[key].users[user]);
         users.push(config_data[key].users[user])
       }
+      info("Checking all members")
       const current_members = await getTeamMembers(octokit, org, team);
       for (var member in current_members) {
         if (current_members[member].login in users) {}
@@ -102,7 +104,7 @@ async function run(): Promise<void> {
           removeTeamMember(octokit, org, team, current_members[member])
         }
       }
-
+      info("TODO: Repo creation")
       
     }
   } catch (err: any) {

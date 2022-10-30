@@ -16,7 +16,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getOrgTeams = void 0;
 const core_1 = __nccwpck_require__(2186);
 const github_1 = __nccwpck_require__(5438);
 const fs_1 = __nccwpck_require__(3412);
@@ -32,7 +31,29 @@ function getOrgTeams(octokit, org) {
         return data;
     });
 }
-exports.getOrgTeams = getOrgTeams;
+function createTeam(octokit, org, team) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { data, status } = yield octokit.rest.teams.create({
+            org: org,
+            name: team,
+        });
+        if (status !== 200) {
+            throw Error(`Failed to get org teams: ${status}\n${data}`);
+        }
+    });
+}
+function addMember(octokit, org, team, user) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { data, status } = yield octokit.rest.teams.addOrUpdateMembershipForUserInOrg({
+            org: org,
+            team_slug: team,
+            username: user,
+        });
+        if (status !== 200) {
+            throw Error(`Failed to get org teams: ${status}\n${data}`);
+        }
+    });
+}
 function run() {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
@@ -47,17 +68,20 @@ function run() {
             }
             const config_data = yield (0, fs_1.loadConfig)(configPath);
             const team_data = yield getOrgTeams(octokit, org);
-            const teams = [];
+            const teams = {};
             for (const team of team_data) {
-                teams.push(team.slug);
+                teams[team.slug] = team;
             }
             for (var key in config_data) {
-                if (key in teams) { }
+                var team;
+                if (key in teams) {
+                    team = teams[key];
+                }
                 else {
-                    const { data, status } = yield octokit.rest.teams.create({
-                        org: org,
-                        name: key,
-                    });
+                    team = createTeam(octokit, org, key);
+                }
+                for (var user in config_data[key].users) {
+                    addMember(octokit, org, team, user);
                 }
             }
         }

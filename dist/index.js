@@ -82,7 +82,7 @@ function run() {
                 }
                 for (var user in config_data[key].users) {
                     (0, core_1.info)("Adding member " + user);
-                    addMember(octokit, org, team, user);
+                    addMember(octokit, org, team, config_data[key].users[user]);
                 }
             }
         }

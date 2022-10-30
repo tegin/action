@@ -69,7 +69,7 @@ async function run(): Promise<void> {
       }
       for (var user in config_data[key].users) {
         info("Adding member " + user)
-        addMember(octokit, org, team, user);
+        addMember(octokit, org, team, config_data[key].users[user]);
       }
 
       

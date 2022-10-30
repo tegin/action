@@ -99,13 +99,15 @@ async function run(): Promise<void> {
       info("Checking all members")
       const current_members = await getTeamMembers(octokit, org, team);
       for (var member in current_members) {
+        info("Checking current member " + current_members[member].login)
+        info(current_members[member])
         if (current_members[member].login in users) {}
         else {
           info("Removing member " + current_members[member].login)
-          removeTeamMember(octokit, org, team, current_members[member])
+          //removeTeamMember(octokit, org, team, current_members[member])
         }
       }
-      info("TODO: Repo creation")
+      info("TODO: Repo creation");
       
     }
   } catch (err: any) {

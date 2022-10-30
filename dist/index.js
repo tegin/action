@@ -116,10 +116,12 @@ function run() {
                 (0, core_1.info)("Checking all members");
                 const current_members = yield getTeamMembers(octokit, org, team);
                 for (var member in current_members) {
+                    (0, core_1.info)("Checking current member " + current_members[member].login);
+                    (0, core_1.info)(current_members[member]);
                     if (current_members[member].login in users) { }
                     else {
                         (0, core_1.info)("Removing member " + current_members[member].login);
-                        removeTeamMember(octokit, org, team, current_members[member]);
+                        //removeTeamMember(octokit, org, team, current_members[member])
                     }
                 }
                 (0, core_1.info)("TODO: Repo creation");

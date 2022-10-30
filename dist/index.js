@@ -101,7 +101,7 @@ function run() {
             for (var key in config_data) {
                 (0, core_1.info)("Checking team " + key);
                 var team;
-                var users = [];
+                var users = {};
                 if (key in teams) {
                     team = teams[key];
                 }
@@ -111,13 +111,12 @@ function run() {
                 for (var user in config_data[key].users) {
                     (0, core_1.info)("Adding member " + config_data[key].users[user]);
                     addMember(octokit, org, team, config_data[key].users[user]);
-                    users.push(config_data[key].users[user]);
+                    users[config_data[key].users[user]] = config_data[key].users[user];
                 }
                 (0, core_1.info)("Checking all members");
                 const current_members = yield getTeamMembers(octokit, org, team);
                 for (var member in current_members) {
                     (0, core_1.info)("Checking current member " + current_members[member].login);
-                    (0, core_1.info)(current_members[member]);
                     if (current_members[member].login in users) { }
                     else {
                         (0, core_1.info)("Removing member " + current_members[member].login);

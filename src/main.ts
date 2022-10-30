@@ -28,6 +28,7 @@ async function createTeam(octokit: any, org: string, team:string) {
   if (status !== 200) {
     throw Error(`Failed to get org teams: ${status}\n${data}`)
   }
+  return data;
 }
 async function addMember(octokit: any, org: string, team:any, user:string) {
   const { data, status } = await octokit.rest.teams.addOrUpdateMembershipForUserInOrg({
@@ -37,6 +38,26 @@ async function addMember(octokit: any, org: string, team:any, user:string) {
   })
   if (status !== 200) {
     throw Error(`Failed to get org teams: ${status}\n${data}`)
+  }
+}
+async function getTeamMembers(octokit: any, org: string, team:any) {
+  const { data, status } = await octokit.rest.teams.addOrUpdateMembershipForUserInOrg({
+    org: org,
+    team_slug: team.slug,
+  })
+  if (status !== 200) {
+    throw Error(`Failed to get org teams: ${status}\n${data}`)
+  }
+  return data;
+}
+async function removeTeamMember(octokit: any, org: string, team:any, user:any) {
+  const { data, status } = await octokit.rest.teams.removeMembershipForUserInOrg({
+    org: org,
+    team_slug: team.slug,
+    username: user.login,
+  })
+  if (status !== 200) {
+    throw Error(`Failed to remove team members: ${status}\n${data}`)
   }
 }
 
@@ -61,6 +82,7 @@ async function run(): Promise<void> {
     }
     for (var key in config_data) {
       var team;
+      var users = []
       if (key in teams) {
         team = teams[key]
       }
@@ -68,8 +90,15 @@ async function run(): Promise<void> {
         team = createTeam(octokit, org, key)
       }
       for (var user in config_data[key].users) {
-        info("Adding member " + user)
         addMember(octokit, org, team, config_data[key].users[user]);
+        users.push(config_data[key].users[user])
+      }
+      const current_members = await getTeamMembers(octokit, org, team);
+      for (var member in current_members) {
+        if (current_members[member].login in users) {}
+        else {
+          removeTeamMember(octokit, org, team, current_members[member])
+        }
       }
 
       

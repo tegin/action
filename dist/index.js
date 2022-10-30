@@ -80,6 +80,7 @@ function run() {
                 else {
                     team = createTeam(octokit, org, key);
                 }
+                (0, core_1.info)("Adding members");
                 for (var user in config_data[key].users) {
                     addMember(octokit, org, team, user);
                 }

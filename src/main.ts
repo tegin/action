@@ -67,6 +67,7 @@ async function run(): Promise<void> {
       else {
         team = createTeam(octokit, org, key)
       }
+      info("Adding members")
       for (var user in config_data[key].users) {
         addMember(octokit, org, team, user);
       }

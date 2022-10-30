@@ -40,6 +40,7 @@ function createTeam(octokit, org, team) {
         if (status !== 200) {
             throw Error(`Failed to get org teams: ${status}\n${data}`);
         }
+        return data;
     });
 }
 function addMember(octokit, org, team, user) {
@@ -51,6 +52,30 @@ function addMember(octokit, org, team, user) {
         });
         if (status !== 200) {
             throw Error(`Failed to get org teams: ${status}\n${data}`);
+        }
+    });
+}
+function getTeamMembers(octokit, org, team) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { data, status } = yield octokit.rest.teams.addOrUpdateMembershipForUserInOrg({
+            org: org,
+            team_slug: team.slug,
+        });
+        if (status !== 200) {
+            throw Error(`Failed to get org teams: ${status}\n${data}`);
+        }
+        return data;
+    });
+}
+function removeTeamMember(octokit, org, team, user) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { data, status } = yield octokit.rest.teams.removeMembershipForUserInOrg({
+            org: org,
+            team_slug: team.slug,
+            username: user.login,
+        });
+        if (status !== 200) {
+            throw Error(`Failed to remove team members: ${status}\n${data}`);
         }
     });
 }
@@ -74,6 +99,7 @@ function run() {
             }
             for (var key in config_data) {
                 var team;
+                var users = [];
                 if (key in teams) {
                     team = teams[key];
                 }
@@ -81,8 +107,15 @@ function run() {
                     team = createTeam(octokit, org, key);
                 }
                 for (var user in config_data[key].users) {
-                    (0, core_1.info)("Adding member " + user);
                     addMember(octokit, org, team, config_data[key].users[user]);
+                    users.push(config_data[key].users[user]);
+                }
+                const current_members = yield getTeamMembers(octokit, org, team);
+                for (var member in current_members) {
+                    if (current_members[member].login in users) { }
+                    else {
+                        removeTeamMember(octokit, org, team, current_members[member]);
+                    }
                 }
             }
         }

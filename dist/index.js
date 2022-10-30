@@ -47,7 +47,7 @@ function addMember(octokit, org, team, user) {
         const { data, status } = yield octokit.rest.teams.addOrUpdateMembershipForUserInOrg({
             org: org,
             team_slug: team.slug,
-            username: user,
+            user: user,
         });
         if (status !== 200) {
             throw Error(`Failed to get org teams: ${status}\n${data}`);

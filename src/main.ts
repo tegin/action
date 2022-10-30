@@ -90,6 +90,8 @@ async function run(): Promise<void> {
         team = createTeam(octokit, org, key)
       }
       for (var user in config_data[key].users) {
+        info(user)
+        info("Adding member " + config_data[key].users[user].login)
         addMember(octokit, org, team, config_data[key].users[user]);
         users.push(config_data[key].users[user])
       }
@@ -97,6 +99,7 @@ async function run(): Promise<void> {
       for (var member in current_members) {
         if (current_members[member].login in users) {}
         else {
+          info("Removing member " + current_members[member].login)
           removeTeamMember(octokit, org, team, current_members[member])
         }
       }

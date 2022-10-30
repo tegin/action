@@ -107,6 +107,8 @@ function run() {
                     team = createTeam(octokit, org, key);
                 }
                 for (var user in config_data[key].users) {
+                    (0, core_1.info)(user);
+                    (0, core_1.info)("Adding member " + config_data[key].users[user].login);
                     addMember(octokit, org, team, config_data[key].users[user]);
                     users.push(config_data[key].users[user]);
                 }
@@ -114,6 +116,7 @@ function run() {
                 for (var member in current_members) {
                     if (current_members[member].login in users) { }
                     else {
+                        (0, core_1.info)("Removing member " + current_members[member].login);
                         removeTeamMember(octokit, org, team, current_members[member]);
                     }
                 }

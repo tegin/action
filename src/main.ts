@@ -33,7 +33,7 @@ async function addMember(octokit: any, org: string, team:any, user:string) {
   const { data, status } = await octokit.rest.teams.addOrUpdateMembershipForUserInOrg({
     org: org,
     team_slug: team.slug,
-    user: user,
+    username: user,
   })
   if (status !== 200) {
     throw Error(`Failed to get org teams: ${status}\n${data}`)
@@ -67,8 +67,8 @@ async function run(): Promise<void> {
       else {
         team = createTeam(octokit, org, key)
       }
-      info("Adding members")
       for (var user in config_data[key].users) {
+        info("Adding member " + user)
         addMember(octokit, org, team, user);
       }
 
